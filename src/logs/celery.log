@@ -1,0 +1,8 @@
+
+2024-05-13 16:37:12,298 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[1648979e-677d-4222-bac7-3118285ee8f2]
+2024-05-13 16:39:59,146 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[434b208f-de8b-4614-a677-51b90ea1b3ad]
+2024-05-13 16:39:59,146 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[434b208f-de8b-4614-a677-51b90ea1b3ad]
+2024-05-13 16:41:49,375 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[de069fbb-9479-4966-a729-cb69e8df1d5b]
+2024-05-13 16:41:49,375 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[de069fbb-9479-4966-a729-cb69e8df1d5b]
+2024-05-13 16:41:49,989 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[12e46093-cb7a-4527-9930-7cb10305de62]
+2024-05-13 16:41:49,990 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[12e46093-cb7a-4527-9930-7cb10305de62]

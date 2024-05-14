@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import uuid4
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from fastapi_pagination.ext.sqlalchemy import paginate
 
 from database import async_session_maker
@@ -49,7 +49,7 @@ class SQLAlchemyRepository(AbstractRepository):
         async with async_session_maker() as session:
             stmt = (
                 select(self.model)
-                .where(self.model.id == order_id)
+                .where(or_(self.model.celery_task_id == str(order_id.id), self.model.id == str(order_id.id)))
             )
 
             res = await session.execute(stmt)
@@ -61,13 +61,11 @@ class SQLAlchemyRepository(AbstractRepository):
         """Метод для таблицы Order.
          Создает запись в таблице с использованием Celery and RabbitMQ
         """
-        order_id = str(uuid4())
-        data['id'] = order_id
         data['session_uuid'] = cookie_id
 
         # регистрация посылок с использованием Celery and RabbitMQ
-        create_order_task.delay(data)
-        res = OrderIdSchemas(id=order_id)
+        order = create_order_task.delay(data)
+        res = OrderIdSchemas(id=order.id)
         return res
 
     async def get_orders_for_user(

@@ -9,6 +9,7 @@ from order.schemas import OrderTypeSchemas, OrderSchemas
 
 class UserSession(Base):
     __tablename__ = 'user_sessions'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     session_id = Column(String, index=True, unique=True)
@@ -18,6 +19,7 @@ class UserSession(Base):
 
 class Order(Base):
     __tablename__ = 'orders'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
@@ -32,11 +34,12 @@ class Order(Base):
         'order_types.name'))  # Здесь используется имя типа заказа в качестве внешнего ключа
     order_type = relationship('OrderType')
 
-    # celery_task_id = Column(String, unique=True, nullable=True, default=None)
+    celery_task_id = Column(String, unique=True, nullable=True, default=None)
 
 
 class OrderType(Base):
     __tablename__ = 'order_types'
+    __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
     name = Column(String, primary_key=True, index=True, unique=True)

@@ -1,11 +1,19 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
 import asyncio
 
 from celery import Celery, current_task
-from redis import asyncio as aioredis
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from order.task_celery import process_create_order
-from utils.extra_logger import cel_logger, logger
+from redis import asyncio as aioredis
+
+from src.tasks.task_celery import process_create_order
+from src.utils.extra_logger import cel_logger, logger
+
+
 app_celery = Celery('tasks', broker='amqp://guest:guest@localhost:5672', backend='redis://localhost')
 
 loop = asyncio.get_event_loop()
@@ -15,7 +23,7 @@ FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
 
 @app_celery.task
-def create_order_task(item_data):
+def create_order_task(item_data, cookie_id):
     """
     Запуск Celery в терминале:
     celery -A celery_app:app_celery worker --loglevel=info --pool=solo
@@ -28,6 +36,7 @@ def create_order_task(item_data):
         logger.info(f'INFO CELERY Create background task[{task_id}]')
 
         item_data['celery_task_id'] = task_id
+        item_data['session_uuid'] = cookie_id
 
         return loop.run_until_complete(process_create_order(item_data))
 

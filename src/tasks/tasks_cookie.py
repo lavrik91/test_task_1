@@ -2,8 +2,8 @@ import uuid
 
 from fastapi import Response, Request
 
-from .models import UserSession
-from database import async_session_maker
+from src.database import Session
+from src.order.models import UserSession
 
 
 async def get_or_create_user_session(response: Response, request: Request) -> str:
@@ -16,7 +16,7 @@ async def get_or_create_user_session(response: Response, request: Request) -> st
 
 async def create_user_session_and_set_cookie(response: Response):
     """Создание сессии, запись в бд и установка куков для пользователя"""
-    async with async_session_maker() as session:
+    async with Session() as session:
         cookie_id = str(uuid.uuid4())
         user_session = UserSession(session_id=cookie_id)
         session.add(user_session)

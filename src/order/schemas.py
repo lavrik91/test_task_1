@@ -1,9 +1,9 @@
-from enum import Enum
 from decimal import Decimal
+from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, UUID4, ConfigDict
 from fastapi import Query
+from pydantic import BaseModel, Field, UUID4, ConfigDict
 
 
 class OrderTypeEnum(str, Enum):

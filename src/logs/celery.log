@@ -6,3 +6,27 @@
 2024-05-13 16:41:49,375 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[de069fbb-9479-4966-a729-cb69e8df1d5b]
 2024-05-13 16:41:49,989 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[12e46093-cb7a-4527-9930-7cb10305de62]
 2024-05-13 16:41:49,990 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[12e46093-cb7a-4527-9930-7cb10305de62]
+2024-05-14 12:22:59,158 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[9640a838-7ec7-4507-9392-eef8fb56a17f]
+2024-05-14 12:49:10,143 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[060f5fae-572d-4df2-b9cb-baf98f9661e5]
+2024-05-14 12:55:07,612 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[1a47616a-6930-4b92-a93c-593c6ec21326]
+2024-05-14 13:06:57,903 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[9c135270-a3fb-4a3c-86b2-efc87ac57de3]
+2024-05-14 13:09:19,793 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[7ee4329b-2385-437c-930c-f311c01b7077]
+2024-05-14 15:04:05,912 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[a75e3d86-0b81-47ac-ade4-eb84c0ba2615]
+2024-05-14 15:04:06,037 ERROR D:\FastAPI\prject1\src\order\task_celery.py process_create_order_mo: Произошла ошибка при создании заказа: 'ChunkedIteratorResult' object has no attribute 'scalars_one'
+2024-05-14 15:06:01,459 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[9b398414-c18d-4631-a888-3b579c5f415c]
+2024-05-14 15:06:01,889 ERROR D:\FastAPI\prject1\src\order\task_celery.py process_create_order_mo: Произошла ошибка при создании заказа: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $2: <sqlalchemy.engine.result.ChunkedIterato... (expected str, got ChunkedIteratorResult)
+[SQL: UPDATE orders SET delivery_cost=$1::VARCHAR WHERE orders.id = $2::VARCHAR RETURNING orders.id]
+[parameters: ('1514.69', <sqlalchemy.engine.result.ChunkedIteratorResult object at 0x0000024D0C01AB40>)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-05-14 15:08:59,364 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[37bb1c2d-6c7c-45cd-a7fa-917f40d3fbef]
+2024-05-14 15:08:59,566 INFO D:\FastAPI\prject1\src\order\task_celery.py process_create_order_mo: d16ec3ea-67cc-4ec6-ad03-65850d04fbb7
+2024-05-14 15:11:15,230 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[a9bea4f5-3d38-4f37-8784-bb40013e992f]
+2024-05-14 15:15:34,943 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[3fea4e65-7b14-47df-a5c8-7807c6b7c27f]
+2024-05-14 15:16:18,226 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task_mo: INFO CELERY Create background task[13f3121c-81d6-476e-8256-cc7179dce612]
+2024-05-14 15:28:09,735 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[7da55786-54e9-410b-97ca-311e4dbb69ea]
+2024-05-14 15:28:09,736 ERROR D:\FastAPI\prject1\src\order\task_celery.py process_create_order: Произошла ошибка при создании заказа: Can't instantiate abstract class OrderRepository with abstract methods add_order, create_mo
+2024-05-14 15:30:35,560 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[182d6909-1059-4090-9497-10d516df9b59]
+2024-05-14 16:20:16,500 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[7fb9c83d-ea6d-43a8-96cf-0cdebb21ddb8]
+2024-05-15 11:02:25,645 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[6e8ab269-8649-4dbc-9bc5-41365c544384]
+2024-05-15 11:06:46,665 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[ab1bcf40-982a-4e70-80a1-5862e20a706b]
+2024-05-15 14:15:59,917 INFO D:\FastAPI\prject1\src\celery_app.py create_order_task: INFO CELERY Create background task[60ec051c-5d1d-464b-93aa-96fd26ada8a2]

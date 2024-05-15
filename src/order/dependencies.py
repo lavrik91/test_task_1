@@ -1,5 +1,5 @@
-from repository.order_type import OrderTypeRepository, OrderRepository
-from services.order import OrderService
+from src.repository.order_type import OrderTypeRepository, OrderRepository
+from src.services.order import OrderService
 
 
 def order_service():

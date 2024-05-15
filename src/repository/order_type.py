@@ -1,5 +1,5 @@
-from utils.repository import SQLAlchemyRepository
-from order.models import OrderType, Order
+from src.order.models import OrderType, Order
+from src.utils.repository import SQLAlchemyRepository
 
 
 class OrderTypeRepository(SQLAlchemyRepository):

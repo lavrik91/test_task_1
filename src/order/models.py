@@ -3,8 +3,8 @@ import uuid
 from sqlalchemy import Column, Integer, String, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 
-from database import Base
-from order.schemas import OrderTypeSchemas, OrderSchemas
+from src.database import Base
+from src.order.schemas import OrderTypeSchemas
 
 
 class UserSession(Base):

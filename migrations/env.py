@@ -1,16 +1,15 @@
-import os
-import sys
 from logging.config import fileConfig
+import sys
+from os.path import abspath, dirname
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 
-sys.path.append(os.path.join(sys.path[0], 'src'))
+sys.path.insert(0, dirname(abspath(__file__)))
 
-
-from src.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+from src.config import settings
 from src.database import Base
 from src.order.models import *
 
@@ -19,12 +18,7 @@ from src.order.models import *
 # access to the values within the .ini file in use.
 config = context.config
 
-section = config.config_ini_section
-config.set_section_option(section, 'DB_HOST', DB_HOST)
-config.set_section_option(section, 'DB_PORT', DB_PORT)
-config.set_section_option(section, 'DB_NAME', DB_NAME)
-config.set_section_option(section, 'DB_USER', DB_USER)
-config.set_section_option(section, 'DB_PASS', DB_PASS)
+config.set_main_option("sqlalchemy.url", f"{settings.DB_URL}")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

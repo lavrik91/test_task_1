@@ -1,18 +1,20 @@
 from abc import ABC, abstractmethod
-from uuid import uuid4
 
-from sqlalchemy import select, or_
 from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy import select, or_, insert, update
 
-from database import async_session_maker
-from celery_app import create_order_task
-from order.schemas import CreateOrderSchemas, OrderTypeEnum, OrderSchemas, OrderIdSchemas
-from order.models import Order
+from src.database import Session
+from src.order.schemas import OrderTypeEnum, OrderSchemas
+from .extra_logger import logger, cel_logger
 
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def find_all(self):
+    async def create(self, **kwargs):
+        raise NotImplemented
+
+    @abstractmethod
+    async def update(self, **kwargs):
         raise NotImplemented
 
     @abstractmethod
@@ -20,7 +22,7 @@ class AbstractRepository(ABC):
         raise NotImplemented
 
     @abstractmethod
-    async def add_order(self, **kwargs):
+    async def find_all(self):
         raise NotImplemented
 
     @abstractmethod
@@ -31,42 +33,68 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(AbstractRepository):
     model = None
 
-    async def find_all(self):
-        """Метод для таблицы OrderType.
-         Выводит все типы заказов
-        """
-        async with async_session_maker() as session:
-            # вывод всех типов посылок
-            stmt = select(self.model)
-            res = await session.execute(stmt)
-            res_dto = [row[0].to_read_model() for row in res.all()]
-            return res_dto
+    async def create(self, data: dict) -> str:
+        try:
+            async with Session() as session:
+                stmt = (
+                    insert(self.model)
+                    .values(**data)
+                    .returning(self.model.id)
+                )
+                res = await session.execute(stmt)
+                await session.commit()
+                return res.scalars().one()
+        except Exception as e:
+            cel_logger.error(f'Error when creating an object in the database: {e}')
+
+    async def update(self, update_data: dict, id: str) -> str:
+        try:
+            async with Session() as session:
+                stmt = (
+                    update(self.model)
+                    .where(self.model.id == id)
+                    .values(**update_data)
+                    .returning(self.model.id)
+                )
+                res = await session.execute(stmt)
+                await session.commit()
+                return res
+        except Exception as e:
+            cel_logger.error(f'Error updating an object in the database: {e}')
 
     async def find_one(self, order_id: str):
         """Метод для таблицы Order.
          Осуществляет поиск заказа по id
         """
-        async with async_session_maker() as session:
-            stmt = (
-                select(self.model)
-                .where(or_(self.model.celery_task_id == str(order_id.id), self.model.id == str(order_id.id)))
-            )
+        try:
+            async with Session() as session:
+                query = (
+                    select(self.model)
+                    .where(or_(self.model.celery_task_id == str(order_id.id), self.model.id == str(order_id.id)))
+                )
 
-            res = await session.execute(stmt)
-            res = res.scalars().first()
-            res_dto = OrderSchemas.model_validate(res)
-            return res_dto
+                res = await session.execute(query)
+                res = res.scalars().first()
 
-    async def add_order(self, data: CreateOrderSchemas, cookie_id: str):
-        """Метод для таблицы Order.
-         Создает запись в таблице с использованием Celery and RabbitMQ
+                if res is not None:
+                    res = OrderSchemas.model_validate(res)
+                return res
+        except Exception as e:
+            cel_logger.error(f'Error when searching by object id in the database: {e}')
+
+    async def find_all(self):
+        """Метод для таблицы OrderType.
+         Выводит все типы заказов
         """
-        data['session_uuid'] = cookie_id
-
-        # регистрация посылок с использованием Celery and RabbitMQ
-        order = create_order_task.delay(data)
-        res = OrderIdSchemas(id=order.id)
-        return res
+        try:
+            async with Session() as session:
+                # вывод всех типов посылок
+                query = select(self.model)
+                res = await session.execute(query)
+                res_dto = [row[0].to_read_model() for row in res.all()]
+                return res_dto
+        except Exception as e:
+            cel_logger.error(f'Error when searching for order types in the database: {e}')
 
     async def get_orders_for_user(
             self,
@@ -78,20 +106,26 @@ class SQLAlchemyRepository(AbstractRepository):
         Список заказов пользователя с пагинацией и фильтрацией по типу заказа и выставлению цены доставки,
         по дефолту выводит все заказы пользователя.
         """
-        async with async_session_maker() as session:
-            stmt = select(self.model).filter(self.model.session_uuid == cookie_id)
+        try:
+            async with Session() as session:
+                query = (
+                    select(self.model)
+                    .filter(self.model.session_uuid == cookie_id)
+                )
 
-            # фильтрация по типу посылки
-            if order_type is not None:
-                stmt = stmt.filter(self.model.order_type_name == order_type.value)
+                # фильтрация по типу посылки
+                if order_type is not None:
+                    query = query.filter(self.model.order_type_name == order_type.value)
 
-            # фильтрация по наличию цены за доставку
-            if delivery_cost is not None:
-                if delivery_cost:
-                    stmt = stmt.filter(self.model.delivery_cost != "Не рассчитана")
-                else:
-                    stmt = stmt.filter(self.model.delivery_cost == "Не рассчитана")
+                # фильтрация по наличию цены за доставку
+                if delivery_cost is not None:
+                    if delivery_cost:
+                        query = query.filter(self.model.delivery_cost != "Не рассчитана")
+                    else:
+                        query = query.filter(self.model.delivery_cost == "Не рассчитана")
 
-            # пагинация результата поиска с разбивкой на страницы и количество заказов на одной страницы
-            paginated_result = await paginate(session, stmt)
-            return paginated_result
+                # пагинация результата поиска с разбивкой на страницы и количество заказов на одной страницы
+                paginated_result = await paginate(session, query)
+                return paginated_result
+        except Exception as e:
+            logger.error(f'Error when searching for user orders in the database: {e}')

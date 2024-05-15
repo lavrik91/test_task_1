@@ -1,17 +1,21 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
 import uvicorn
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
-from order.routers import router as router_order
-
+from src.order.routers import router as router_order
 
 app = FastAPI(
     title="Order App"
 )
-
 
 
 @app.on_event("startup")

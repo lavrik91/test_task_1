@@ -1,4 +1,6 @@
 import sys
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -18,10 +20,11 @@ app = FastAPI(
 )
 
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     redis = aioredis.from_url("redis://localhost")
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    yield
 
 
 app.include_router(

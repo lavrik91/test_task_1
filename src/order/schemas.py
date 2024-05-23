@@ -41,5 +41,11 @@ class OrderTypeSchemas(BaseModel):
     id: int
     name: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserSessionSchemas(BaseModel):
+    id: int
+    session_id: str
+
+    model_config = ConfigDict(from_attributes=True)

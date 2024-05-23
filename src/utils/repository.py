@@ -43,7 +43,8 @@ class SQLAlchemyRepository(AbstractRepository):
                 )
                 res = await session.execute(stmt)
                 await session.commit()
-                return res.scalars().one()
+                return res.scalar_one_or_none()
+            cel_logger.info('ОБЕКТ СОЗДАН')
         except Exception as e:
             cel_logger.error(f'Error when creating an object in the database: {e}')
 
@@ -58,7 +59,7 @@ class SQLAlchemyRepository(AbstractRepository):
                 )
                 res = await session.execute(stmt)
                 await session.commit()
-                return res
+                return res.scalars().one()
         except Exception as e:
             cel_logger.error(f'Error updating an object in the database: {e}')
 

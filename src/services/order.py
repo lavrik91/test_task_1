@@ -8,6 +8,14 @@ class OrderService:
     def __init__(self, repo: AbstractRepository):
         self.repo: AbstractRepository = repo()
 
+    async def create_order(self, data: dict) -> str:
+        res = await self.repo.create(data)
+        return res
+
+    async def update_order(self, data: dict, order_id: str) -> str:
+        res = await self.repo.update(data, order_id)
+        return res
+
     async def get_order(self, order_id: str):
         """Поиск посылки по Id"""
         res = await self.repo.find_one(order_id)

@@ -1,16 +1,17 @@
 import httpx
 from fastapi_cache.decorator import cache
 
-from src.repository.order_type import OrderRepository
+from src.services.order import OrderService
+from src.order.dependencies import order_service
 from src.utils.extra_logger import cel_logger
 
 
 async def process_create_order(item_data: dict) -> dict:
-    service = OrderRepository()
+    service = order_service()
 
-    order = await service.create(item_data)
+    order = await service.create_order(item_data)
     delivery_cost = await get_delivery_cost(float(item_data['weight']), float(item_data['cost']))
-    await service.update({'delivery_cost': delivery_cost}, order)
+    await service.update_order({'delivery_cost': delivery_cost}, order)
     return {'task': 'success'}
 
 

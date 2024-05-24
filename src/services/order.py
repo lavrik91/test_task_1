@@ -31,18 +31,20 @@ class OrderService:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Order types not created")
         return res
 
-    async def get_orders_for_user(self, request: Request, order_type: OrderTypeEnum, delivery_cost: bool) -> dict:
-        """Список заказов пользователя по cookie_id с пагинацией и фильтрацией по типу заказа и выставлению цены доставки,
-            по дефолту выводит все заказы пользователя.
-        """
+    async def get_orders_for_user(self, request: Request, order_type, delivery_cost, page, page_size):
         cookie_id = request.cookies.get('session_id')
 
         if cookie_id is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orders not found")
 
-        res = await self.repo.get_orders_for_user(order_type, delivery_cost, cookie_id)
+        res = await self.repo.get_orders_for_user(
+            order_type=order_type,
+            delivery_cost=delivery_cost,
+            cookie_id=cookie_id,
+            page=page,
+            page_size=page_size
+        )
 
-        if not res.items:
+        if not res:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orders not found")
-
-        return res.dict()
+        return res

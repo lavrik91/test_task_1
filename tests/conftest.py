@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from src.main import app
-from src.database import Base, get_async_session
+from src.database import Base, get_async_session, Session
 from src.order.models import *
 from src.config import settings
 
@@ -26,6 +26,7 @@ async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
+app.dependency_overrides[Session] = async_session_maker
 app.dependency_overrides[get_async_session] = override_get_async_session
 
 

@@ -1,6 +1,6 @@
 from decimal import Decimal
 from enum import Enum
-from typing import Optional
+from typing import Optional, Annotated, Union
 
 from fastapi import Query
 from pydantic import BaseModel, Field, UUID4, ConfigDict
@@ -19,7 +19,7 @@ class OrderListQueryParamsSchemas(BaseModel):
 
 
 class OrderIdSchemas(BaseModel):
-    id: UUID4
+    id: str
 
 
 class CreateOrderSchemas(BaseModel):
@@ -33,7 +33,7 @@ class CreateOrderSchemas(BaseModel):
 
 
 class OrderSchemas(CreateOrderSchemas):
-    id: UUID4
+    id: str
     delivery_cost: Optional[str] = Field(None, description="The delivery cost of the order, if calculated.")
 
 
@@ -49,3 +49,8 @@ class UserSessionSchemas(BaseModel):
     session_id: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class GetFilter(BaseModel):
+    order_type_name: OrderTypeEnum | None
+    delivery_cost: bool | None

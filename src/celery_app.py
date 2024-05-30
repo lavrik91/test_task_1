@@ -10,15 +10,15 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
+from src.config import settings
 from src.tasks.task_celery import process_create_order
 from src.utils.extra_logger import cel_logger, logger
 
-
-app_celery = Celery('tasks', broker='amqp://guest:guest@localhost:5672', backend='redis://localhost')
+app_celery = Celery('tasks', broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
 
 loop = asyncio.get_event_loop()
 
-redis = aioredis.from_url("redis://localhost")
+redis = aioredis.from_url(settings.RADIS_URL)
 FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
 

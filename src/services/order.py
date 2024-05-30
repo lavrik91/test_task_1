@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status, Request
 
-from src.order.schemas import OrderTypeEnum
 from src.utils.repository import AbstractRepository
 
 
@@ -36,6 +35,9 @@ class OrderService:
 
         if cookie_id is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orders not found")
+
+        if order_type is not None:
+            order_type = order_type.value
 
         res = await self.repo.get_orders_for_user(
             order_type=order_type,

@@ -27,11 +27,11 @@ class Order(Base):
     cost = Column(Numeric(precision=10, scale=2))
     delivery_cost = Column(String, default='Не рассчитана')
 
-    session_uuid = Column(String, ForeignKey('user_sessions.session_id'))  # Здесь используется UUID сессии
+    session_uuid = Column(String, ForeignKey('user_sessions.session_id'))
     user_session = relationship('UserSession', back_populates='orders')
 
     order_type_name = Column(String, ForeignKey(
-        'order_types.name'))  # Здесь используется имя типа заказа в качестве внешнего ключа
+        'order_types.name'))  # Здесь используется имя типа заказа в качестве ключа
     order_type = relationship('OrderType')
 
     celery_task_id = Column(String, unique=True, nullable=True, default=None)

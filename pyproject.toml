@@ -35,6 +35,7 @@ rabbitmq = "^0.2.0"
 loguru = "^0.7.2"
 fastapi-logging = "^0.1.1"
 celery = "^5.3.6"
+aio-celery = "^0.10.0"
 
 
 [build-system]

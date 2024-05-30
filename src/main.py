@@ -5,15 +5,13 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-import uvicorn
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi_pagination import add_pagination
 from redis import asyncio as aioredis
 
+from src.config import settings
 from src.order.routers import router as router_order
 
 app = FastAPI(
@@ -23,7 +21,7 @@ app = FastAPI(
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    redis = aioredis.from_url("redis://localhost")
+    redis = aioredis.from_url(settings.RADIS_URL)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
 
@@ -47,6 +45,3 @@ app.add_middleware(
 )
 
 
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)

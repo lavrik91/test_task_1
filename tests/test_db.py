@@ -1,11 +1,29 @@
+import pytest
 from decimal import Decimal
 from uuid import uuid4
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, delete
 
 from conftest import async_session_maker
 from src.order.models import OrderType, Order, UserSession
 from src.order.schemas import OrderTypeSchemas, OrderSchemas, UserSessionSchemas
+
+
+@pytest.fixture(scope='class', autouse=True)
+async def empty_orders():
+    async with async_session_maker() as session:
+        stmt_order = delete(Order)
+        stmt_order_type = delete(OrderType)
+        stmt_user_session = delete(UserSession)
+
+        await session.execute(stmt_order)
+        await session.execute(stmt_order_type)
+        await session.execute(stmt_user_session)
+        await session.commit()
+
+        query_2 = select(Order)
+        result_2 = await session.execute(query_2)
+        assert result_2.scalars().all() == []
 
 
 class TestDB:

@@ -14,7 +14,7 @@ async def get_or_create_user_session(response: Response, request: Request) -> st
     return cookie_id
 
 
-async def create_user_session_and_set_cookie(response: Response):
+async def create_user_session_and_set_cookie(response: Response) -> str:
     """Создание сессии, запись в бд и установка куков для пользователя"""
     async with Session() as session:
         cookie_id = str(uuid.uuid4())

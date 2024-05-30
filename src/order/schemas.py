@@ -1,21 +1,15 @@
 from decimal import Decimal
 from enum import Enum
-from typing import Optional, Annotated, Union
+from typing import Optional
 
-from fastapi import Query
-from pydantic import BaseModel, Field, UUID4, ConfigDict
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class OrderTypeEnum(str, Enum):
     CLOTHING = 'Clothing'
     ELECTRONICS = 'Electronics'
     MISCELLANEOUS = 'Miscellaneous'
-
-
-class OrderListQueryParamsSchemas(BaseModel):
-    order_type: Optional[OrderTypeEnum] = Query(None,
-                                                description="Type of the order: Clothing, Electronics, Miscellaneous")
-    is_calculated: Optional[bool] = Query(True, description="Whether the cost of the order is calculated")
 
 
 class OrderIdSchemas(BaseModel):
@@ -50,7 +44,3 @@ class UserSessionSchemas(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-
-class GetFilter(BaseModel):
-    order_type_name: OrderTypeEnum | None
-    delivery_cost: bool | None

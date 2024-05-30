@@ -7,6 +7,7 @@ class OrderTypeRepository(SQLAlchemyRepository):
     model = OrderType
     session = Session
 
+
 class OrderRepository(SQLAlchemyRepository):
     model = Order
     session = Session

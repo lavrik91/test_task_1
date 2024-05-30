@@ -2,18 +2,17 @@ from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, Request, Query, status
 from fastapi_cache.decorator import cache
-from fastapi_pagination import Page, add_pagination
 
 from src.celery_app import create_order_task
 from src.services.order import OrderService
 from src.tasks.tasks_cookie import get_or_create_user_session
 from .dependencies import order_service, order_type_service
-from .schemas import CreateOrderSchemas, OrderTypeSchemas, OrderSchemas, OrderTypeEnum, OrderIdSchemas, GetFilter
+from .schemas import CreateOrderSchemas, OrderTypeSchemas, OrderSchemas, OrderTypeEnum, OrderIdSchemas
 
 router = APIRouter()
 
 
-@router.post('/create_order', status_code=status.HTTP_201_CREATED, response_model=OrderIdSchemas)
+@router.post('/create_order', status_code=status.HTTP_201_CREATED)
 async def create_order(
         order: Annotated[CreateOrderSchemas, Depends()],
         cookie_id=Depends(get_or_create_user_session)
@@ -27,6 +26,7 @@ async def create_order(
     # регистрация посылок с использованием Celery and RabbitMQ
     order_id = create_order_task.delay(order.model_dump(), cookie_id)
     return OrderIdSchemas(id=order_id.id)
+
 
 
 @router.get('/order_type_list', response_model=List[OrderTypeSchemas])
@@ -52,6 +52,7 @@ async def get_orders_user_list(
     """Список заказов пользователя по cookie_id с пагинацией и фильтрацией по типу заказа и выставлению цены доставки.
     По дефолту выводит все заказы пользователя.
     """
+
     orders = await service.get_orders_for_user(request, order_type, delivery_cost, page, page_size)
     return orders
 
@@ -63,5 +64,5 @@ async def get_order_by_id(
         service: Annotated[OrderService, Depends(order_service)]
 ):
     """Поиск посылки по Id"""
-    order = await service.get_order(order_id.model_dump())
+    order = await service.get_order(order_id.id)
     return order

@@ -5,11 +5,10 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
-from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from src.main import app
-from src.database import Base, get_async_session, Session
+from src.database import get_async_session
 from src.order.models import *
 from src.config import settings
 
@@ -26,8 +25,17 @@ async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-app.dependency_overrides[Session] = async_session_maker
 app.dependency_overrides[get_async_session] = override_get_async_session
+
+
+@pytest.fixture(scope='class')
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    try:
+        yield loop
+    finally:
+        loop.close()
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -37,14 +45,17 @@ async def prepare_database():
     async with engine_test.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    print('DROP DATABASE')
     async with engine_test.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
 
-client = TestClient(app)
-
-
 @pytest.fixture(scope="session")
+def anyio_backend():
+    return 'asyncio'
+
+
+@pytest.fixture(scope='session')
 async def ac() -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac

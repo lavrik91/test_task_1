@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    CELERY_BROKER_URL: str
+    CELERY_RESULT_BACKEND: str
+
+    RADIS_URL: str
+
     @property
     def DB_URL(self):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"

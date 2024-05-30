@@ -1,60 +1,10 @@
-2024-05-22 16:16:21,798 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-22 16:40:30,119 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-22 16:41:38,828 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-22 16:51:23,298 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-22 16:52:12,490 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-22 16:52:55,430 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-22 16:54:53,902 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-22 16:56:11,387 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-23 10:37:19,510 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 10:37:19,640 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-23 10:52:14,455 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 10:53:18,985 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 10:54:54,661 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 10:58:09,133 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 10:59:42,207 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:02:12,573 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:03:27,548 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:04:00,480 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:07:44,661 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:15:55,722 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:21:47,609 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:26:25,305 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:28:29,810 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:31:19,160 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:31:19,165 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: (sqlalchemy.dialects.postgresql.asyncpg.InterfaceError) <class 'asyncpg.exceptions._base.InterfaceError'>: cannot perform operation: another operation is in progress
-[SQL: UPDATE orders SET name=$1::VARCHAR, delivery_cost=$2::VARCHAR WHERE orders.id IS NULL RETURNING orders.id]
-[parameters: ('qwer', '1223.12')]
+2024-05-30 16:02:04,663 ERROR D:\FastAPI\prject1\src\utils\repository.py find_all: Error when searching for order types in the database: (sqlalchemy.dialects.postgresql.asyncpg.InterfaceError) <class 'asyncpg.exceptions._base.InterfaceError'>: cannot perform operation: another operation is in progress
+[SQL: SELECT order_types.id, order_types.name 
+FROM order_types]
 (Background on this error at: https://sqlalche.me/e/20/rvf5)
-2024-05-23 11:37:45,697 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'NoneType' object has no attribute 'send'
-2024-05-23 11:37:57,213 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: (sqlalchemy.dialects.postgresql.asyncpg.InterfaceError) <class 'asyncpg.exceptions._base.InterfaceError'>: cannot perform operation: another operation is in progress
-[SQL: UPDATE orders SET name=$1::VARCHAR, delivery_cost=$2::VARCHAR WHERE orders.id IS NULL RETURNING orders.id]
-[parameters: ('qwer', '1223.12')]
+2024-05-30 16:02:04,739 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: (sqlalchemy.dialects.postgresql.asyncpg.InterfaceError) <class 'asyncpg.exceptions._base.InterfaceError'>: cannot perform operation: another operation is in progress
+[SQL: SELECT orders.id, orders.name, orders.weight, orders.cost, orders.delivery_cost, orders.session_uuid, orders.order_type_name, orders.celery_task_id 
+FROM orders 
+WHERE orders.celery_task_id = $1::VARCHAR OR orders.id = $2::VARCHAR]
+[parameters: ('34527623tcb72t', '34527623tcb72t')]
 (Background on this error at: https://sqlalche.me/e/20/rvf5)
-2024-05-23 12:10:56,976 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:10:57,116 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:10:57,246 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: No row was found when one was required
-2024-05-23 12:14:12,865 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:14:13,022 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:14:13,022 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:16:47,262 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:16:47,401 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:16:47,402 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'async_generator' object has no attribute 'execute'
-2024-05-23 12:23:31,651 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'add'
-2024-05-23 12:27:23,077 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object is not callable
-2024-05-23 12:28:35,022 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object is not callable
-2024-05-23 12:30:05,130 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'add'
-2024-05-23 12:30:49,686 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: 'async_generator' object has no attribute 'add'
-2024-05-23 12:39:46,213 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: __aenter__
-2024-05-23 12:40:09,695 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: __aenter__
-2024-05-23 12:41:19,552 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: __aenter__
-2024-05-23 12:47:57,832 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: Class 'sqlalchemy.engine.result.ChunkedIteratorResult' is not mapped
-2024-05-23 12:51:41,578 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: 'sessionmaker' object has no attribute 'execute'
-2024-05-23 12:53:01,936 ERROR D:\FastAPI\prject1\src\utils\repository.py create: Error when creating an object in the database: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: повторяющееся значение ключа нарушает ограничение уникальности "orders_pkey"
-DETAIL:  Ключ "(id)=(27d064eb-1279-48b4-8e31-e4c9b55299b2)" уже существует.
-[SQL: INSERT INTO orders (id, name, weight, cost, delivery_cost, session_uuid, order_type_name, celery_task_id) VALUES ($1::VARCHAR, $2::VARCHAR, $3::NUMERIC(10, 3), $4::NUMERIC(10, 2), $5::VARCHAR, $6::VARCHAR, $7::VARCHAR, $8::VARCHAR) RETURNING orders.id]
-[parameters: ('27d064eb-1279-48b4-8e31-e4c9b55299b2', 'test_1', 123, 4, 'Не рассчитана', '27d064eb-1279-48b4-8e31-e4c9b55299b2', 'Clothing', '27d064eb-1279-48b4-8e31-e4c9b55299b2')]
-(Background on this error at: https://sqlalche.me/e/20/gkpj)
-2024-05-23 12:53:02,021 ERROR D:\FastAPI\prject1\src\utils\repository.py update: Error updating an object in the database: No row was found when one was required
-2024-05-23 15:37:14,766 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'
-2024-05-23 15:37:44,946 ERROR D:\FastAPI\prject1\src\utils\repository.py find_one: Error when searching by object id in the database: 'str' object has no attribute 'id'

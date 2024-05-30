@@ -1,7 +1,6 @@
 import httpx
 from fastapi_cache.decorator import cache
 
-from src.services.order import OrderService
 from src.order.dependencies import order_service
 from src.utils.extra_logger import cel_logger
 

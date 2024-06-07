@@ -1,17 +1,21 @@
 import httpx
+
+from loguru import logger
 from fastapi_cache.decorator import cache
 
 from src.order.dependencies import order_service
-from src.utils.extra_logger import cel_logger
 
 
 async def process_create_order(item_data: dict) -> dict:
-    service = order_service()
+    try:
+        service = order_service()
 
-    order = await service.create_order(item_data)
-    delivery_cost = await get_delivery_cost(float(item_data['weight']), float(item_data['cost']))
-    await service.update_order({'delivery_cost': delivery_cost}, order)
-    return {'task': 'success'}
+        order = await service.create_order(item_data)
+        delivery_cost = await get_delivery_cost(float(item_data['weight']), float(item_data['cost']))
+        await service.update_order({'delivery_cost': delivery_cost}, order)
+        return {'task': 'success'}
+    except Exception as e:
+        return {'task': 'unsuccessful', 'error': f"{e}"}
 
 
 @cache(expire=300)
@@ -24,7 +28,7 @@ async def get_price_usd() -> float:
         usd_to_rub_rate = data['Valute']['USD']['Value']
         return usd_to_rub_rate
     except Exception as e:
-        cel_logger.error(f"Error when receiving the USD exchange rate: {e}")
+        logger.error(f"Error when receiving the USD exchange rate: {e}")
 
 
 async def get_delivery_cost(weight: float, cost: float) -> str:
@@ -34,4 +38,4 @@ async def get_delivery_cost(weight: float, cost: float) -> str:
         delivery_cost = str(round((weight * 0.5 + cost * 0.01) * usd_to_rub_rate, 2))
         return delivery_cost
     except Exception as e:
-        cel_logger.error(f"Error in calculating the shipping cost: {e}")
+        logger.error(f"Error in calculating the shipping cost: {e}")

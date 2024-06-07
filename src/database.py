@@ -1,20 +1,47 @@
-from typing import AsyncGenerator
+from contextvars import ContextVar
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    AsyncEngine,
+    create_async_engine,
+    async_sessionmaker
+)
+from sqlalchemy.exc import IntegrityError, PendingRollbackError
+from sqlalchemy.orm import DeclarativeBase
+from fastapi import HTTPException, status
 
 from src.config import settings
 
 DATABASE_URL = settings.DB_URL
 
-engine = create_async_engine(DATABASE_URL)
-Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+engine: AsyncEngine = create_async_engine(DATABASE_URL)
 
 
 class Base(DeclarativeBase):
     pass
 
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with Session() as session:
-        yield session
+def get_session(engine: AsyncEngine | None = engine) -> AsyncSession:
+    Session: async_sessionmaker = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
+    return Session()
+
+
+CTX_SESSION: ContextVar[AsyncSession] = ContextVar(
+    'session', default=get_session()
+)
+
+
+class Session:
+    _ERRORS = (IntegrityError, PendingRollbackError)
+
+    def __init__(self) -> None:
+        self._session: AsyncSession = CTX_SESSION.get()
+
+    async def execute(self, query):
+        try:
+            result = await self._session.execute(query)
+            return result
+        except self._ERRORS:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")

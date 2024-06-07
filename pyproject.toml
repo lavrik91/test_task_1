@@ -36,6 +36,7 @@ loguru = "^0.7.2"
 fastapi-logging = "^0.1.1"
 celery = "^5.3.6"
 aio-celery = "^0.10.0"
+python-json-logger = "^2.0.7"
 
 
 [build-system]

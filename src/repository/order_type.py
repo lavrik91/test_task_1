@@ -3,11 +3,9 @@ from src.utils.repository import SQLAlchemyRepository
 from src.database import Session
 
 
-class OrderTypeRepository(SQLAlchemyRepository):
+class OrderTypeRepository(SQLAlchemyRepository[OrderType]):
     model = OrderType
-    session = Session
 
 
-class OrderRepository(SQLAlchemyRepository):
+class OrderRepository(SQLAlchemyRepository[Order]):
     model = Order
-    session = Session

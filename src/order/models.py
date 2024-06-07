@@ -1,10 +1,12 @@
 import uuid
+from typing import TypeVar
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 
 from src.database import Base
-from src.order.schemas import OrderTypeSchemas
+
+ConcreteTable = TypeVar("ConcreteTable", bound=Base)
 
 
 class UserSession(Base):
@@ -43,9 +45,3 @@ class OrderType(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, primary_key=True, index=True, unique=True)
-
-    def to_read_model(self) -> OrderTypeSchemas:
-        return OrderTypeSchemas(
-            id=self.id,
-            name=self.name,
-        )

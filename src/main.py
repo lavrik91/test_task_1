@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
+from loguru import logger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
@@ -13,6 +14,22 @@ from redis import asyncio as aioredis
 
 from src.config import settings
 from src.order.routers import router as router_order
+
+logger.add(
+    "".join(
+        [
+            str(settings.ROOT_PATH),
+            "/logs/",
+            settings.LOGGING.file.lower(),
+            ".log",
+        ]
+    ),
+    format=settings.LOGGING.format,
+    rotation=settings.LOGGING.rotation,
+    compression=settings.LOGGING.compression,
+    level="INFO",
+    enqueue=True,
+)
 
 app = FastAPI(
     title="Order App"
@@ -43,5 +60,3 @@ app.add_middleware(
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                    "Authorization"],
 )
-
-

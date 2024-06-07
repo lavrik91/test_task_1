@@ -1,6 +1,8 @@
 from fastapi import HTTPException, status, Request
 
+from src.order.schemas import OrderSchemas, OrderTypeSchemas
 from src.utils.repository import AbstractRepository
+from src.order.models import *
 
 
 class OrderService:
@@ -8,33 +10,57 @@ class OrderService:
         self.repo: AbstractRepository = repo()
 
     async def create_order(self, data: dict) -> str:
+        """Create order.
+
+        :param data: dict - a dictionary with the data needed to create an order
+
+        :return: str - order ID
+        """
+
         res = await self.repo.create(data)
         return res
 
     async def update_order(self, data: dict, order_id: str) -> str:
+        """Update order
+
+        :param data: dict - a dictionary with the data needed to create an order
+        :param order_id: str - order ID
+
+        :return: str - ID order
+        """
+
         res = await self.repo.update(data, order_id)
         return res
 
-    async def get_order(self, order_id: str):
-        """Поиск посылки по Id"""
+    async def get_order(self, order_id: str) -> OrderSchemas:
+        """Search for a parcel by ID
+
+        :param order_id: str - order ID
+
+        :return: Order - order object
+        """
+
         res = await self.repo.find_one(order_id)
-        if res is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
         return res
 
-    async def get_order_types(self):
-        """Список всех представленных типов посылок"""
+    async def get_order_types(self) -> list[OrderTypeSchemas]:
+        """A list of all the types of packages presented"""
+
         res = await self.repo.find_all()
-
-        if res is None:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Order types not created")
         return res
 
-    async def get_orders_for_user(self, request: Request, order_type, delivery_cost, page, page_size):
+    async def get_orders_for_user(
+            self,
+            request: Request,
+            order_type,
+            delivery_cost,
+            page,
+            page_size
+    ) -> list[OrderSchemas]:
         cookie_id = request.cookies.get('session_id')
 
         if cookie_id is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orders not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
 
         if order_type is not None:
             order_type = order_type.value
@@ -46,7 +72,4 @@ class OrderService:
             page=page,
             page_size=page_size
         )
-
-        if not res:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Orders not found")
         return res

@@ -5,11 +5,21 @@ from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
-from src.database import CTX_SESSION, get_session
+from src.database.database import CTX_SESSION, get_session
 
 
 def transaction(coro):
+    """
+    Decorator for handling SQLAlchemy database transactions asynchronously.
 
+    Usage:
+        @transaction
+        async def some_async_function(...):
+                ...
+
+    :param coro: Coroutine function to decorate.
+    :return: Decorated coroutine function with transaction handling.
+    """
     @wraps(coro)
     async def inner(*args, **kwargs):
         session: AsyncSession = get_session()

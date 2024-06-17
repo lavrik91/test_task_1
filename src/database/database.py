@@ -34,6 +34,7 @@ CTX_SESSION: ContextVar[AsyncSession] = ContextVar(
 
 
 class Session:
+    # All sqlalchemy errors that can be raised
     _ERRORS = (IntegrityError, PendingRollbackError)
 
     def __init__(self) -> None:

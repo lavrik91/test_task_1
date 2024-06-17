@@ -1,15 +1,9 @@
 from decimal import Decimal
-from enum import Enum
 from typing import Optional
-
 
 from pydantic import BaseModel, Field, ConfigDict
 
-
-class OrderTypeEnum(str, Enum):
-    CLOTHING = 'Clothing'
-    ELECTRONICS = 'Electronics'
-    MISCELLANEOUS = 'Miscellaneous'
+from src.models.order_types.schemas import OrderTypeEnum
 
 
 class OrderIdSchemas(BaseModel):
@@ -29,18 +23,3 @@ class CreateOrderSchemas(BaseModel):
 class OrderSchemas(CreateOrderSchemas):
     id: str
     delivery_cost: Optional[str] = Field(None, description="The delivery cost of the order, if calculated.")
-
-
-class OrderTypeSchemas(BaseModel):
-    id: int
-    name: str
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class UserSessionSchemas(BaseModel):
-    id: int
-    session_id: str
-
-    model_config = ConfigDict(from_attributes=True)
-

@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Generic, Type
 
-from loguru import logger
 from sqlalchemy import select, or_, update, Result
 from fastapi import HTTPException
 from starlette import status
 
-from src.database import Session
-from src.order.models import ConcreteTable
+from src.database.database import Session
+from src.database.models import ConcreteTable
 
 
 class AbstractRepository(ABC):
@@ -33,29 +32,72 @@ class AbstractRepository(ABC):
 
 
 class SQLAlchemyRepository(AbstractRepository, Session, Generic[ConcreteTable]):
+    """
+    Repository class for interacting with SQLAlchemy models.
+
+    Args:
+        AbstractRepository: Abstract base class for repositories.
+        Session: SQLAlchemy session for database operations.
+        Generic[ConcreteTable]: Generic type for the SQLAlchemy model.
+
+    Attributes:
+        model (Type[ConcreteTable]): SQLAlchemy model type managed by this repository.
+    """
 
     model: Type[ConcreteTable]
 
     def __init__(self):
+        """
+        Initializes the SQLAlchemyRepository instance.
+
+        Raises:
+            HTTPException: If the model attribute is missing.
+        """
         super().__init__()
 
         if not self.model:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Can not initiate the class without model attribute"
+                detail="Cannot initialize the class without model attribute"
             )
 
-    async def create(self, payload: dict) -> str:
+    async def create(self, payload: dict) -> ConcreteTable:
+        """
+        Creates a new object of type ConcreteTable using provided data.
+
+        Args:
+            payload (dict): Data dictionary for creating the object.
+
+        Returns:
+            ConcreteTable: Created object of type ConcreteTable.
+
+        Raises:
+            HTTPException: If there is a database error (status code 500).
+        """
         try:
             schema = self.model(**payload)
             self._session.add(schema)
             await self._session.flush()
             await self._session.refresh(schema)
-            return schema.id
-        except self._ERRORS:
+            return schema
+        except self._ERRORS as e:
+            print(f'ERROR {e}')
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
 
     async def update(self, update_data: dict, id: str) -> str:
+        """
+        Updates data of an existing ConcreteTable object identified by id.
+
+        Args:
+            update_data (dict): Data dictionary with fields to update.
+            id (str): Identifier of the object to update.
+
+        Returns:
+            str: Identifier of the updated object.
+
+        Raises:
+            HTTPException: If there is a database error (status code 500).
+        """
         stmt = (
             update(self.model)
             .where(self.model.id == id)
@@ -72,14 +114,22 @@ class SQLAlchemyRepository(AbstractRepository, Session, Generic[ConcreteTable]):
 
         return _result
 
-    async def find_one(self, order_id: str) -> ConcreteTable:
-        """Метод для таблицы Order.
-         Осуществляет поиск заказа по id
+    async def find_one(self, id: str) -> ConcreteTable:
         """
+        Finds a single ConcreteTable object by order_id or Celery task id.
 
+        Args:
+            order_id (str): Order identifier or Celery task id.
+
+        Returns:
+            ConcreteTable: Found ConcreteTable object.
+
+        Raises:
+            HTTPException: If no objects are found (status code 404).
+        """
         query = (
             select(self.model)
-            .where(or_(self.model.celery_task_id == order_id, self.model.id == order_id))
+            .where(or_(self.model.celery_task_id == id, self.model.id == id))
         )
 
         result: Result = await self.execute(query)
@@ -90,11 +140,15 @@ class SQLAlchemyRepository(AbstractRepository, Session, Generic[ConcreteTable]):
         return _result
 
     async def find_all(self) -> list[ConcreteTable]:
-        """Метод для таблицы OrderType.
-         Выводит все типы заказов
         """
+        Retrieves all ConcreteTable objects.
 
-        # вывод всех типов посылок
+        Returns:
+            list[ConcreteTable]: List of all ConcreteTable objects.
+
+        Raises:
+            HTTPException: If no objects are found (status code 404).
+        """
         query = select(self.model)
         result: Result = await self.execute(query)
 
@@ -111,27 +165,38 @@ class SQLAlchemyRepository(AbstractRepository, Session, Generic[ConcreteTable]):
             page: int,
             page_size: int
     ) -> list[ConcreteTable]:
+        """
+        Retrieves orders for a specific user with optional filters for order type and delivery cost.
+
+        Args:
+            order_type (str | None): Optional filter for order type.
+            delivery_cost (bool | None): Optional filter for delivery cost presence.
+            cookie_id (str): Unique identifier of the user.
+            page (int): Page number for pagination.
+            page_size (int): Number of items per page.
+
+        Returns:
+            list[ConcreteTable]: List of orders for the user with applied filters.
+
+        Raises:
+            HTTPException: If no orders are found (status code 404).
+        """
         query = (
             select(self.model)
             .filter(self.model.session_uuid == cookie_id)
         )
 
-        # фильтрация по типу посылки
         if order_type is not None:
             query = query.filter(self.model.order_type_name == order_type)
 
-        # фильтрация по наличию цены за доставку
         if delivery_cost is not None:
             if delivery_cost:
                 query = query.filter(self.model.delivery_cost != "Не рассчитана")
             else:
                 query = query.filter(self.model.delivery_cost == "Не рассчитана")
 
-        # Вычисляем смещение и лимит для страницы
         offset = (page - 1) * page_size
         limit = page_size
-
-        # Применяем смещение и лимит
         query = query.offset(offset).limit(limit)
 
         result: Result = await self.execute(query)

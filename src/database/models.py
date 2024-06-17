@@ -4,7 +4,7 @@ from typing import TypeVar
 from sqlalchemy import Column, Integer, String, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 
-from src.database import Base
+from src.database.database import Base
 
 ConcreteTable = TypeVar("ConcreteTable", bound=Base)
 

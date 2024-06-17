@@ -1,52 +1,71 @@
 from fastapi import HTTPException, status, Request
 
-from src.order.schemas import OrderSchemas, OrderTypeSchemas
-from src.utils.repository import AbstractRepository
-from src.order.models import *
+from src.database.repository import AbstractRepository
+from src.database.models import *
 
 
 class OrderService:
+    """Service class for managing orders."""
+
     def __init__(self, repo: AbstractRepository):
+        """
+        Initialize OrderService with a repository.
+
+        Args:
+            repo (AbstractRepository): Repository implementing database operations.
+        """
         self.repo: AbstractRepository = repo()
 
-    async def create_order(self, data: dict) -> str:
-        """Create order.
+    async def create_order(self, payload: dict) -> Order:
+        """
+        Create a new order based on provided data.
 
-        :param data: dict - a dictionary with the data needed to create an order
+        Args:
+            payload (dict): A dictionary with the data needed to create an order.
 
-        :return: str - order ID
+        Returns:
+            Order: Created order object.
+
+        Raises:
+            HTTPException: If there is a database error (status code 500).
         """
 
-        res = await self.repo.create(data)
+        res = await self.repo.create(payload)
         return res
 
-    async def update_order(self, data: dict, order_id: str) -> str:
-        """Update order
+    async def update_order(self, payload: dict, order_id: str) -> str:
+        """
+        Update an existing order identified by order_id with new data.
 
-        :param data: dict - a dictionary with the data needed to create an order
-        :param order_id: str - order ID
+        Args:
+            payload (dict): A dictionary with the data needed to update an order.
+            order_id (str): Identifier of the order to update.
 
-        :return: str - ID order
+        Returns:
+            str: Identifier of the updated order.
+
+        Raises:
+            HTTPException: If there is a database error (status code 500).
         """
 
-        res = await self.repo.update(data, order_id)
+        res = await self.repo.update(payload, order_id)
         return res
 
-    async def get_order(self, order_id: str) -> OrderSchemas:
-        """Search for a parcel by ID
+    async def get_order(self, order_id: str) -> Order:
+        """
+        Retrieve an order by its unique order_id.
 
-        :param order_id: str - order ID
+        Args:
+            order_id (str): Identifier of the order to retrieve.
 
-        :return: Order - order object
+        Returns:
+            Order: Retrieved order object.
+
+        Raises:
+            HTTPException: If the specified order is not found (status code 404).
         """
 
         res = await self.repo.find_one(order_id)
-        return res
-
-    async def get_order_types(self) -> list[OrderTypeSchemas]:
-        """A list of all the types of packages presented"""
-
-        res = await self.repo.find_all()
         return res
 
     async def get_orders_for_user(
@@ -56,7 +75,23 @@ class OrderService:
             delivery_cost,
             page,
             page_size
-    ) -> list[OrderSchemas]:
+    ) -> list[Order]:
+        """
+        Retrieve orders for a specific user based on filters like order type and delivery cost.
+
+        Args:
+            request (Request): FastAPI request object containing cookies.
+            order_type (str | None): Optional filter for order type.
+            delivery_cost (bool | None): Optional filter for delivery cost presence.
+            page (int): Page number for pagination.
+            page_size (int): Number of items per page.
+
+        Returns:
+            list[Order]: List of orders for the user with applied filters.
+
+        Raises:
+            HTTPException: If user session ID is not found (status code 404).
+        """
         cookie_id = request.cookies.get('session_id')
 
         if cookie_id is None:

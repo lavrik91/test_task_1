@@ -11,7 +11,7 @@ sys.path.insert(0, dirname(abspath(__file__)))
 
 from src.config import settings
 from src.database import Base
-from src.order.models import *
+from src.database.models import *
 
 
 # this is the Alembic Config object, which provides

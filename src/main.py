@@ -13,7 +13,8 @@ from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
 from src.config import settings
-from src.order.routers import router as router_order
+from src.routers.order import router as router_order
+from src.routers.order_type import router as router_type
 
 logger.add(
     "".join(
@@ -46,7 +47,13 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 app.include_router(
     router_order,
     prefix="/order",
-    tags=['Order'])
+    tags=["Order"]
+)
+app.include_router(
+    router_type,
+    prefix="/type",
+    tags=["Type"]
+)
 
 origins = [
     "http://localhost:8000",

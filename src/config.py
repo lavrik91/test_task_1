@@ -17,7 +17,7 @@ class LoggingSettings(BaseModel):
     file: str = "backend"
 
     # The .log filename for Celery
-    file_celery: str = "celery"
+    file_celery: str = "worker"
 
     # The .log file Rotation
     rotation: str = "1MB"
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
 
-    RADIS_URL: str
+    REDIS_URL: str
 
     ROOT_PATH: Path = Path(__file__).parent.parent
 

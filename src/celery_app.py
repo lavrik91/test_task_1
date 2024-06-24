@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
+sys.path.append(str(Path(__file__).parent.parent))
 
 import asyncio
 
@@ -12,7 +12,7 @@ from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
 from src.config import settings
-from src.celery.task.task_celery import process_create_order
+from src.worker.task_celery import process_create_order
 
 app_celery = Celery('tasks', broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
 
@@ -22,7 +22,7 @@ logger.add(
         [
             str(settings.ROOT_PATH),
             "/logs/",
-            settings.LOGGING.file.lower(),
+            settings.LOGGING.file_celery.lower(),
             ".log",
         ]
     ),
@@ -35,11 +35,11 @@ logger.add(
 
 loop = asyncio.get_event_loop()
 
-redis = aioredis.from_url(settings.RADIS_URL)
+redis = aioredis.from_url(settings.REDIS_URL)
 FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
 
-@app_celery.task
+@app_celery.task(name='src.cel_app.create_order_task')
 def create_order_task(payload, cookie_id):
     """
     Celery task for creating an order and calculating delivery cost.

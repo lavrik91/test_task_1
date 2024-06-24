@@ -11,9 +11,9 @@ class OrderIdSchemas(BaseModel):
 
 
 class CreateOrderSchemas(BaseModel):
-    name: str
-    weight: Decimal
-    cost: Decimal
+    name: str = Field(min_length=1, frozen=True, example="Jane")
+    weight: Decimal = Field(gt=0.01,decimal_places=2, description="Weight of the order", example="123.33")
+    cost: Decimal = Field(gt=0.01, decimal_places=2, description="Cost of the order", example="22.22")
     order_type_name: OrderTypeEnum = Field(default='Clothing', description="Type of the order",
                                            examples=['Clothing', 'Electronics', 'Miscellaneous'])
 

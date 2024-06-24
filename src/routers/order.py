@@ -3,7 +3,7 @@ from typing import List, Annotated
 from fastapi import APIRouter, Depends, Request, Query, status
 from fastapi_cache.decorator import cache
 
-from src.celery.celery_app import create_order_task
+from src.celery_app import create_order_task
 from src.services.order import OrderService
 from src.models.user_session.task.tasks_cookie import get_or_create_user_session
 from src.models.order.dependencies import order_service
@@ -21,7 +21,8 @@ router = APIRouter()
 @router.post('/create_order', status_code=status.HTTP_201_CREATED)
 @transaction
 async def create_order(
-        order: Annotated[CreateOrderSchemas, Depends()],
+        # order: Annotated[CreateOrderSchemas, Depends()],
+        order: CreateOrderSchemas,
         cookie_id=Depends(get_or_create_user_session)
 ) -> OrderIdSchemas:
     """

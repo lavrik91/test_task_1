@@ -8,6 +8,7 @@ from src.database.models import UserSession
 from src.models.user_session.task.tasks_cookie import (
     get_or_create_user_session,
     create_user_session_and_set_cookie,
+    set_session_cookie,
 )
 
 

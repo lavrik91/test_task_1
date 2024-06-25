@@ -95,7 +95,7 @@ class OrderService:
         cookie_id = request.cookies.get('session_id')
 
         if cookie_id is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You have not created any orders")
 
         if order_type is not None:
             order_type = order_type.value

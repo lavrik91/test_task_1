@@ -14,7 +14,6 @@ from data_for_tests import ORDERS_TEST, ORDER_TYPE_TEST, SESSION_TEST
 
 # DATABASE
 DATABASE_URL_TEST = settings.DB_URL
-
 engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool)
 Base.metadata.bind = engine_test
 
@@ -24,6 +23,7 @@ def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
         engine_test, class_=AsyncSession, expire_on_commit=False
     )
     return Session()
+
 
 
 # @pytest.fixture(autouse=True, scope='session')

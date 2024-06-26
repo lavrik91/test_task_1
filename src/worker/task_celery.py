@@ -30,7 +30,8 @@ async def process_create_order(payload: dict) -> dict:
         order = await service.create_order(payload)
         delivery_cost = await get_delivery_cost(float(payload['weight']), float(payload['cost']))
         await service.update_order({'delivery_cost': delivery_cost}, order.id)
-        return {'task': 'success'}
+        logger.info(f"Order created: task[{order.id}]")
+        return {'status': 'success'}
     except Exception as e:
         logger.error(f"Error in processing order creation: {e}")
         raise

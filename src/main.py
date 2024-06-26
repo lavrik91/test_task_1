@@ -29,8 +29,8 @@ logger.add(
     rotation=settings.LOGGING.rotation,
     compression=settings.LOGGING.compression,
     level="INFO",
-    enqueue=True,
 )
+logger.info("Starting App")
 
 app = FastAPI(
     title="Order App"

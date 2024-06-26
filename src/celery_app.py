@@ -30,8 +30,9 @@ logger.add(
     rotation=settings.LOGGING.rotation,
     compression=settings.LOGGING.compression,
     level="INFO",
-    enqueue=True,
 )
+
+logger.info("Celery Started")
 
 loop = asyncio.get_event_loop()
 

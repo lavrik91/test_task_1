@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    hostname: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5531:5531"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command:
+      --port 6379
+    expose:
+      - 6379
+    volumes:
+      - redis_data:/data
+
+  app:
+    build:
+      context: .
+    container_name: fastapi_app
+    env_file:
+      - .env.dev
+    command: ["/fastapi_app/docker/app.sh"]
+    ports:
+      - "9999:8000"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - app_data:/app
+
+
+  rabbitmq:
+    image: "bitnami/rabbitmq:3.7"
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "rabbitmq_data:/bitnami"
+
+  celery:
+    build:
+      context: .
+    container_name: celery_app
+    env_file:
+      - .env.dev
+    command: ["/fastapi_app/docker/celery.sh"]
+    depends_on:
+      - redis
+      - app
+      - rabbitmq
+    volumes:
+      - celery_data:/celery
+
+volumes:
+  db_data:
+  redis_data:
+  app_data:
+  rabbitmq_data:
+  celery_data:
+  flower_data:

@@ -1,6 +1,45 @@
 version: "3.8"
 
+
 services:
+  app:
+    build:
+      context: .
+    container_name: fastapi_app
+    env_file:
+      - .env.dev
+    command: >
+      bash -c "alembic upgrade head
+      && cd src
+      && gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000"
+    ports:
+      - "9999:8000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    volumes:
+      - app_data:/app
+
+  consumer:
+    build:
+      context: .
+    container_name: consumer_app
+    command: >
+      bash -c "cd src
+      && python consumer.py"
+    restart: always
+    volumes:
+      - app_data:/app
+    env_file:
+      - .env.dev
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   db:
     image: postgres:15
     hostname: postgres
@@ -25,22 +64,6 @@ services:
     volumes:
       - redis_data:/data
 
-  app:
-    build:
-      context: .
-    container_name: fastapi_app
-    env_file:
-      - .env.dev
-    command: ["/fastapi_app/docker/app.sh"]
-    ports:
-      - "9999:8000"
-    depends_on:
-      - db
-      - redis
-    volumes:
-      - app_data:/app
-
-
   rabbitmq:
     image: "bitnami/rabbitmq:3.7"
     container_name: rabbitmq
@@ -50,6 +73,11 @@ services:
       - "15672:15672"
     volumes:
       - "rabbitmq_data:/bitnami"
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   celery:
     build:
@@ -57,11 +85,12 @@ services:
     container_name: celery_app
     env_file:
       - .env.dev
-    command: ["/fastapi_app/docker/celery.sh"]
+    command: >
+      bash -c "cd src
+      && celery --app=celery_app:app_celery worker -l INFO"
     depends_on:
-      - redis
-      - app
-      - rabbitmq
+      app:
+        condition: service_started
     volumes:
       - celery_data:/celery
 
@@ -71,4 +100,3 @@ volumes:
   app_data:
   rabbitmq_data:
   celery_data:
-  flower_data:

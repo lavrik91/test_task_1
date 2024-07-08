@@ -63,7 +63,7 @@ def create_order_task(payload, cookie_id):
     logger.info(f'INFO CELERY Create background task[{task_id}]')
 
     payload.update({
-        'celery_task_id': task_id,
+        'background_task_id': task_id,
         'session_uuid': cookie_id
     })
 

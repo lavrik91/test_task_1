@@ -15,7 +15,7 @@ from src.models.order.schemas import (
 from src.models.order_types.schemas import OrderTypeEnum
 from src.database.transaction import transaction
 
-router = APIRouter()
+router = APIRouter(prefix="/order", tags=["Order"])
 
 
 @router.post('/create_order', status_code=status.HTTP_201_CREATED)

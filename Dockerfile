@@ -1,7 +1,9 @@
 FROM python:3.10
 
-RUN mkdir /fastapi_app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+RUN mkdir /fastapi_app
 WORKDIR /fastapi_app
 
 RUN pip install --upgrade pip
@@ -14,5 +16,5 @@ RUN poetry install --no-root
 
 COPY . .
 
-RUN chmod a+x docker/*.sh
 
+RUN chmod a+x docker/*.sh

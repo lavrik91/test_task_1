@@ -7,7 +7,7 @@ from src.models.order_types.dependencies import order_type_service
 from src.models.order_types.schemas import OrderTypeSchemas
 from src.database.transaction import transaction
 
-router = APIRouter()
+router = APIRouter(prefix="/type", tags=["Type"])
 
 
 @router.get('/order_type_list', response_model=List[OrderTypeSchemas], status_code=status.HTTP_200_OK)

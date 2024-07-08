@@ -19,6 +19,9 @@ class LoggingSettings(BaseModel):
     # The .log filename for Celery
     file_celery: str = "worker"
 
+    # The .log filename for RabbitMQ
+    file_rabbitmq: str = "rabbitmq"
+
     # The .log file Rotation
     rotation: str = "1MB"
 
@@ -41,6 +44,10 @@ class Settings(BaseSettings):
     RMQ_PORT: int
 
     REDIS_URL: str
+
+    RMQ_QUEUE: str = 'order_queue'
+
+    CLIENT_ORIGIN: str = 'http://localhost:8000'
 
     ROOT_PATH: Path = Path(__file__).parent.parent
 

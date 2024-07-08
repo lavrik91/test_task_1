@@ -36,7 +36,7 @@ class Order(Base):
         'order_types.name'))  # Здесь используется имя типа заказа в качестве ключа
     order_type = relationship('OrderType')
 
-    celery_task_id = Column(String, unique=True, nullable=True, default=None)
+    background_task_id = Column(String, unique=True, nullable=True, default=None)
 
 
 class OrderType(Base):

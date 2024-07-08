@@ -13,8 +13,11 @@ from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 
 from src.config import settings
+from src.pika.config.rabbit_connection import rabbit_connection
 from src.routers.order import router as router_order
 from src.routers.order_type import router as router_type
+from src.routers.order_create_RMQ import router as router_create_RMQ
+
 
 
 logger.add(
@@ -32,32 +35,26 @@ logger.add(
     level="INFO",
 )
 
-app = FastAPI(
-    title="Order App"
-)
-
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     redis = aioredis.from_url(settings.REDIS_URL)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    await rabbit_connection.connect()
     yield
+    await rabbit_connection.disconnect()
 
 
-app.include_router(
-    router_order,
-    prefix="/order",
-    tags=["Order"]
-)
-app.include_router(
-    router_type,
-    prefix="/type",
-    tags=["Type"]
-)
+app = FastAPI(title="Order App", lifespan=lifespan)
 
+app.include_router(router_order, prefix="/api/v1")
+
+app.include_router(router_type, prefix="/api/v1")
+
+app.include_router(router_create_RMQ, prefix="/api/v1")
 
 origins = [
-    "http://localhost:8000",
+    settings.CLIENT_ORIGIN,
 ]
 
 app.add_middleware(

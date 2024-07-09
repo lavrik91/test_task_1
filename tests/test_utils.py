@@ -8,10 +8,6 @@ from src.database.models import UserSession
 from src.models.user_session.task.tasks_cookie import (
     get_or_create_user_session,
     create_user_session_and_set_cookie,
-<<<<<<< HEAD
-    set_session_cookie,
-=======
->>>>>>> 7b4a077 (10 commit (ref test))
 )
 
 

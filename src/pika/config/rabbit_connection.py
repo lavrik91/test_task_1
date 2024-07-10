@@ -14,6 +14,7 @@ RMQ_QUEUE = settings.RMQ_QUEUE
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
+        """Convert Decimal objects to strings for JSON serialization."""
         if isinstance(obj, Decimal):
             return str(obj)
         return super().default(obj)

@@ -26,7 +26,7 @@ async def create_order(
         cookie_id=Depends(get_or_create_user_session)
 ) -> OrderIdSchemas:
     """
-    Endpoint to create a new order.
+    Endpoint to create a new order by using Celery.
 
     Args:
         order (CreateOrderSchema): Data schema for creating an order.
@@ -34,9 +34,6 @@ async def create_order(
 
     Returns:
         OrderIdSchema: ID of the created order.
-
-    Raises:
-        HTTPException: If there's an issue with the database (status code 500).
     """
 
     # регистрация посылок с использованием Celery and RabbitMQ
@@ -49,8 +46,10 @@ async def create_order(
 async def get_orders_user_list(
         request: Request,
         service: Annotated[OrderService, Depends(order_service)],
-        order_type: OrderTypeEnum = Query(default=None,
-                                          description='Type of the order: Clothing, Electronics, Miscellaneous'),
+        order_type: OrderTypeEnum = Query(
+            default=None,
+            description='Type of the order: Clothing, Electronics, Miscellaneous'
+        ),
         delivery_cost: bool = Query(default=None, description='Whether the cost is calculated or not'),
         page: int = 1,
         page_size: int = 10,

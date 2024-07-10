@@ -47,8 +47,8 @@ async def get_orders_user_list(
         request: Request,
         service: Annotated[OrderService, Depends(order_service)],
         order_type: Annotated[
-                OrderTypeEnum | None,
-                Query(description='Type of the order: Clothing, Electronics, Miscellaneous')
+            OrderTypeEnum | None,
+            Query(description='Type of the order: Clothing, Electronics, Miscellaneous')
         ] = None,
         delivery_cost: Annotated[
             bool | None,

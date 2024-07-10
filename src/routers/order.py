@@ -46,11 +46,14 @@ async def create_order(
 async def get_orders_user_list(
         request: Request,
         service: Annotated[OrderService, Depends(order_service)],
-        order_type: OrderTypeEnum = Query(
-            default=None,
-            description='Type of the order: Clothing, Electronics, Miscellaneous'
-        ),
-        delivery_cost: bool = Query(default=None, description='Whether the cost is calculated or not'),
+        order_type: Annotated[
+                OrderTypeEnum | None,
+                Query(description='Type of the order: Clothing, Electronics, Miscellaneous')
+        ] = None,
+        delivery_cost: Annotated[
+            bool | None,
+            Query(description='Whether the cost is calculated or not')
+        ] = None,
         page: int = 1,
         page_size: int = 10,
 ):

@@ -14,7 +14,7 @@ from redis import asyncio as aioredis
 from src.pika.router import message_router
 from src.config import settings
 
-PARALLEL_TASKS = 1
+PARALLEL_TASKS = 10
 
 logger.add(
     "".join(
